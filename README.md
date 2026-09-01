@@ -151,6 +151,16 @@ recommended so content edits don't require a manual build/upload.
   must match the `applicationHelp` path set on the corresponding widget in dxkb-web
   (`public/js/p3/widget/app/<Service>.js`).
 - Always include a `## Overview` heading — that's what the info icon shows.
+- **Match every info button on the service page, not just Overview.** Most service forms have
+  three: `overview`, `pdb-selection`, and `parameters`. Check the widget's template
+  (`dxkb-web/public/js/p3/widget/app/templates/<Service>.html`) for
+  `class="... infobutton"` and note each button's `name` — every one needs a matching id or
+  that dialog shows "Help text missing". Note the heading text must slugify to the button name:
+  `## PDB Selection` → `pdb-selection`. A heading like `## Protein Selection` yields
+  `protein-selection` and will *not* be found.
+- **Indent nested bullets by 2 spaces, not 8.** MyST does not treat an 8-space indent as a
+  sub-list; it silently folds those lines into the parent bullet's text, so the dialog renders
+  them as a run-on paragraph instead of a nested list.
 - Keep real tool names and paper citations intact (e.g. `RASTtk`, `PATtyFams`, `PGFams`, and
   author/journal references). Only brand/UI references (`BV-BRC` → `dxkb`, `bv-brc.org` →
   `dxkb.org`) were rebranded.
@@ -162,10 +172,12 @@ The following were authored fresh (no BV-BRC equivalent to adapt) and should be 
 whoever owns each pipeline:
 
 **dxkb-only services** (no reference anywhere — highest need):
-- `frustraMPNN_service.md` (FrustraMPNN)
 - `stabiliNNator.md` (Protein Stability Prediction — proliNNator / disulfiNNate)
-- `stability_prediction_service.md` (ThermoMPNN)
-- `structure_sequence_prediction_service.md` (ProteinMPNN)
+
+The other three dxkb-only pages — `frustraMPNN_service.md` (FrustraMPNN),
+`stability_prediction_service.md` (ThermoMPNN) and
+`structure_sequence_prediction_service.md` (ProteinMPNN) — have been replaced with
+content supplied by the service owners and no longer need review.
 
 **BV-BRC services missing from BV-BRC-Docs** (drafted from related pages):
 - `comparative_pathway_service.md`
