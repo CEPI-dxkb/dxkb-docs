@@ -57,7 +57,11 @@ Build output lands in `docroot/_build/html/` and is **git-ignored** — never co
 
 ## Prerequisites
 
-- **Python 3.8+** (the pinned deps in `requirements.txt` were verified on 3.8).
+- **Python 3.9+**. (The original `requirements.txt` pins were inherited from BV-BRC-Docs and no
+  longer install/build on current Python — Sphinx 2.2.0 imports `jinja2.environmentfilter`, which
+  Jinja2 3.x removed. The file now pins verified ranges instead; see the comments in it.)
+- The **`enchant`** native library, required by `sphinxcontrib-spelling`
+  (`apt install libenchant-2-2`, or `brew install enchant`).
 - `make` (standard on macOS/Linux; on Windows use `make.bat`).
 
 ---
@@ -65,7 +69,8 @@ Build output lands in `docroot/_build/html/` and is **git-ignored** — never co
 ## Build it locally
 
 ```bash
-# 1. Create and activate a virtual environment (once)
+# 1. Create and activate a virtual environment (once), from the REPO ROOT --
+#    this is where requirements.txt lives, not docroot/
 python3 -m venv venv
 source venv/bin/activate           # Windows: venv\Scripts\activate
 
@@ -76,6 +81,10 @@ pip install -r requirements.txt
 cd docroot
 make html
 ```
+
+`make html` prints ~250 warnings about missing images and unresolved `/tutorial/...`
+cross-references — expected, and harmless for the info dialogs (see the note below). Look for
+`build succeeded` on the final line.
 
 The site is generated at `docroot/_build/html/`. Open
 `docroot/_build/html/index.html` in a browser to browse it, or verify a single service page:

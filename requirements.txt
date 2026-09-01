@@ -1,18 +1,26 @@
 # Use this file to install initial packages
 # pip3 install -r requirements.txt
+#
+# The original pins (Sphinx 2.2.0 / sphinx-rtd-theme 0.4.3 / recommonmark 0.6.0) were
+# inherited from BV-BRC-Docs and no longer build on current Python: Sphinx 2.2.0 imports
+# `jinja2.environmentfilter`, which was removed in Jinja2 3.x, so `make html` dies with an
+# ImportError. The ranges below are the versions this repo is actually verified against.
 
 # Sphinx
-Sphinx==2.2.0
+Sphinx>=8,<10
 
-# Initial Theme
-sphinx-rtd-theme==0.4.3
+# Theme
+sphinx-rtd-theme>=3
 
-# Markdown Support
-recommonmark==0.6.0
+# Markdown support. conf.py sets extensions=['myst_parser', ...] -- MyST does the actual
+# Markdown parsing and provides myst_heading_anchors, which generates the section ids the
+# service info dialogs look up. recommonmark is NOT a parser here, but conf.py still imports
+# it at the bottom for a legacy warning workaround, so it has to be installed.
+myst-parser>=4
+recommonmark>=0.7.1
 
-# Additional Plugins Not Installed Automatically
+# Additional plugins not installed automatically
 sphinx-autobuild
 sphinxcontrib-httpdomain
 sphinxcontrib-newsfeed
 sphinxcontrib-spelling
-sphinxcontrib-websupport
