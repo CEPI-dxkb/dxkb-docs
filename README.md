@@ -57,9 +57,11 @@ Build output lands in `docroot/_build/html/` and is **git-ignored** — never co
 
 ## Prerequisites
 
-- **Python 3.9+**. (The original `requirements.txt` pins were inherited from BV-BRC-Docs and no
-  longer install/build on current Python — Sphinx 2.2.0 imports `jinja2.environmentfilter`, which
-  Jinja2 3.x removed. The file now pins verified ranges instead; see the comments in it.)
+- **Python 3.12+**. `Sphinx>=8` and `myst-parser>=4` floor at 3.10, and pip resolves Sphinx to
+  9.x, which requires 3.12 — on anything older the `pip install` below fails outright. (The
+  original pins were inherited from BV-BRC-Docs and no longer build at all: Sphinx 2.2.0 imports
+  `jinja2.environmentfilter`, which Jinja2 3.x removed. The file pins verified ranges instead;
+  see the comments in it.) CI builds on 3.12 — see `.github/workflows/docs-build.yml`.
 - The **`enchant`** native library, required by `sphinxcontrib-spelling`
   (`apt install libenchant-2-2`, or `brew install enchant`).
 - `make` (standard on macOS/Linux; on Windows use `make.bat`).
