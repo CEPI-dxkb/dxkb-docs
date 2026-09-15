@@ -21,6 +21,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import sys  # used by the spelling-builder guard below
+
 
 # -- General configuration ------------------------------------------------
 
@@ -31,15 +33,42 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['myst_parser', 'sphinxcontrib.newsfeed', 'sphinxcontrib.spelling', 'sphinxcontrib.httpdomain']
+extensions = ['myst_parser', 'sphinxcontrib.newsfeed', 'sphinxcontrib.httpdomain']
 #extensions = ['recommonmark', 'sphinxcontrib.newsfeed', 'sphinxcontrib.spelling', 'sphinxcontrib.httpdomain']
+
+# sphinxcontrib.spelling is loaded only when the native `enchant` C library is present.
+#
+# pyenchant is a thin ctypes wrapper: importing it fails outright when libenchant is not
+# installed, and because a Sphinx extension is imported at config time that failure killed
+# `make html` entirely -- a spell checker that `make html` never runs was breaking the
+# ordinary HTML build for anyone who had not also `brew install enchant` /
+# `apt install libenchant-2-2`. Now the HTML build works everywhere and the spelling
+# builder stays available to whoever has the library. CI installs it, so `-b spelling`
+# remains covered there.
+try:
+    import enchant  # noqa: F401  (imported for the side effect of locating libenchant)
+except ImportError:
+    spelling_available = False
+else:
+    spelling_available = True
+    extensions.append('sphinxcontrib.spelling')
 
 myst_heading_anchors = 2
 
-# spelling check extension
+# spelling check extension (settings are inert unless the extension loaded above)
 spelling_lang='en_US'
 spelling_word_list_filename='spelling_wordlist.txt'
 spelling_show_suggestions=False
+
+# Fail loudly rather than silently skipping the check: without this, `-b spelling` on a
+# machine lacking libenchant would report only an opaque "builder not registered" error.
+if not spelling_available and 'spelling' in sys.argv:
+    raise RuntimeError(
+        "The 'spelling' builder needs the native enchant library, which is not installed.\n"
+        "  macOS:         brew install enchant\n"
+        "  Ubuntu/Debian: sudo apt install libenchant-2-2\n"
+        "Plain `make html` does not need it."
+    )
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
